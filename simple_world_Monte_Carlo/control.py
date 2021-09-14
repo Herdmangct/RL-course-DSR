@@ -58,7 +58,7 @@ epsilon_decay_window = 10.
 
 # 1.5 some important paramters
 
-gamma = 0.98
+gamma = 0.98 # discount factor 
 nr_eval_episodes = 50
 nr_ctrl_episodes = 50
 
@@ -83,9 +83,22 @@ for ctrl_episode_id in range(nr_ctrl_episodes):
 
         # 2.1 a sweep over all the states in the system.
         for counter, init_state in enumerate(all_states):
+            pass
 
             # 2.1.1 for each state, restart the episode
+            terminated = False
+            env.reset(init_state)
+            counter = 0 
+            tmp_V = 0.0
             # 2.1.2 run the simulation (following pi) and collect all the rewards
+            while not terminated:
+                action_id = choose_an_action_based_on_pi(env.state, pi)
+                new_state, reward, terminated, info = env.step(action_id)
+                tmp_V += np.power(gamma, counter) * reward
+                counter += 1
+            i, j = init_state
+
+            V_accumulate[i, j] += tmp_V
 
     # plot the current values
     plotter(ax, V, vmax=0, vmin=-4. * N, env=env)

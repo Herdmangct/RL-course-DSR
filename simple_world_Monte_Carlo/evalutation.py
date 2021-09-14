@@ -1,4 +1,4 @@
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as pl
 from matplotlib import interactive
 import numpy as np
 from tqdm import tqdm
@@ -39,7 +39,7 @@ gamma = 0.98
 all_states = dstack_product(np.arange(N), np.arange(N))
 
 for episode_id in tqdm(range(nr_episodes)):
-    # a sweep over all the states in the system.
+    # one sweep over all the states in the system.
     for counter, init_state in enumerate(all_states):
         terminated = False
         env.reset(init_state)

@@ -68,7 +68,7 @@ for learning_episode_id in tqdm(range(nr_learing_episodes), 'learning episode'):
         pi = return_epsilon_greedy_pi(Q, epsilon)
         action_id = choose_an_action_based_on_pi(env.state, pi)
         state_prime, reward, terminated, info = env.step(action_id)
-        learn_Q(state, action_id, reward, state_prime, Q, gamma, alpha)
+        learn_Q(state, action_id, reward, state_prime, Q, gamma, alpha) # learn Q
 
     V = np.sum(Q * pi, axis=-1)
     plotter(ax, V, vmax=0, vmin=-2. * N, env=env)

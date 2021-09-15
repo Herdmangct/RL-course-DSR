@@ -83,13 +83,17 @@ for ctrl_episode_id in range(nr_ctrl_episodes):
 
         # 2.1 a sweep over all the states in the system.
         for counter, init_state in enumerate(all_states):
-            pass
+
+            terminated = False
+
+            env.reset(init_state)
+
+            if np.array_equal(init_state, env.goal_state):
+                terminated = True
 
             # 2.1.1 for each state, restart the episode
-            terminated = False
-            env.reset(init_state)
-            counter = 0 
             tmp_V = 0.0
+            counter = 0 
             # 2.1.2 run the simulation (following pi) and collect all the rewards
             while not terminated:
                 action_id = choose_an_action_based_on_pi(env.state, pi)
@@ -97,11 +101,14 @@ for ctrl_episode_id in range(nr_ctrl_episodes):
                 tmp_V += np.power(gamma, counter) * reward
                 counter += 1
             i, j = init_state
-
             V_accumulate[i, j] += tmp_V
 
+    V = V_accumulate / (nr_eval_episodes)
+    
+    del V_accumulate
+
     # plot the current values
-    plotter(ax, V, vmax=0, vmin=-4. * N, env=env)
+    plotter(ax, V_accumulate, vmax=0, vmin=-4. * N, env=env)
     plot_the_policy(plt, pi, env)
     plot_simulation(env, choose_an_action_based_on_pi, pi, plt)
 
@@ -115,7 +122,12 @@ for ctrl_episode_id in range(nr_ctrl_episodes):
 
         # 3.1.1 calculate the Qs
         Q = np.zeros(nr_actions)
-        # Here some code is missing
+
+        for action_id in range(nr_actions):
+            env.reset(init_state)
+            state, reward, _, _ = env.step(action_id)
+            i, j = state
+            Q[action_id] = reward + gamma * V[i, j]
         
         # 3.1.2 finding the best Q
         Q_max = np.max(Q)
